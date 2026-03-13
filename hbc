@@ -1,0 +1,65 @@
+medicine-shop/
+│
+├── frontend/
+│   ├── index.html           # Home page
+│   ├── shop.html            # Browse medicines
+│   ├── appointments.html    # Book appointment
+│   ├── checkout.html        # Checkout & upload prescription
+│   ├── style.css            # Styles
+│   └── script.js            # Client-side JS
+│
+├── backend/
+│   ├── server.js            # Node.js server
+│   ├── database.db          # SQLite database
+│   └── models/              # DB models for users, orders, medicines
+│
+└── README.md
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medicine Shop</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Welcome to My Medicine Shop</h1>
+    <nav>
+      <a href="shop.html">Shop</a>
+      <a href="appointments.html">Appointments</a>
+      <a href="checkout.html">Checkout</a>
+    </nav>
+  </header>
+  <main>
+    <h2>Browse Medicines & Book Appointments</h2>
+    <p>Use the navigation above to shop for medicines or book appointments with our doctors.</p>
+  </main>
+</body>
+</html>
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(bodyParser.json());
+app.use(express.static('frontend'));
+
+const db = new sqlite3.Database('./backend/database.db');
+
+// Get all medicines
+app.get('/api/medicines', (req, res) => {
+  db.all('SELECT * FROM Medicines', [], (err, rows) => {
+    if(err) return res.status(500).json({error: err.message});
+    res.json(rows);
+  });
+});
+
+// Add new order
+app.post('/api/orders', (req, res) => {
+  const { userId, items } = req.body;
+  // Simplified: insert order and items
+  res.json({ success: true });
+});
+
+app.listen(3000, () => console.log('Server running on http://localhost:3000'));
